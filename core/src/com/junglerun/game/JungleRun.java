@@ -16,7 +16,8 @@ public class JungleRun extends ApplicationAdapter {
     //dimensões de largura e altura padrão
     private int larguraPadrãoX;
     private int alturaPadrãoY;
-
+	private int larguraFundo=0;
+	private int alturaFundo=0;
     //variavel para trabalhar com o indice do vector para alterar sprites
 	private float indiceSprite;
 
@@ -28,7 +29,6 @@ public class JungleRun extends ApplicationAdapter {
 
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
-
 	    //Preenchendo o vector com sprite personagem ao vector
 	    for (int i=0;i<10;i++){
 	    	ninja[i] = new Texture("ninja"+(i+1)+".png");
@@ -36,7 +36,9 @@ public class JungleRun extends ApplicationAdapter {
 
 	    larguraPadrãoX = Gdx.graphics.getWidth();
 	    alturaPadrãoY = Gdx.graphics.getHeight();
-
+	    //Obter o tamanho do fundo
+		alturaFundo = fundo.getHeight();
+		larguraFundo= fundo.getWidth();
 	    //Inicializar o indice do Sprite
 		indiceSprite = 0;
 	}
@@ -54,7 +56,7 @@ public class JungleRun extends ApplicationAdapter {
         batch.begin();
 
         batch.draw(fundo,0,0,larguraPadrãoX,alturaPadrãoY);
-        batch.draw(ninja[(int)indiceSprite],400,300);
+        batch.draw(ninja[(int)indiceSprite],10,(int)(alturaFundo*0.30));
 
         batch.end();
 	}
