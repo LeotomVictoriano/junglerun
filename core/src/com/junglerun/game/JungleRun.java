@@ -27,6 +27,7 @@ public class JungleRun extends ApplicationAdapter {
 	private boolean salto;
 	private int alturaMaximaDeSalto;
 	private int alturaMinimaDeQueda;
+	private int velocidadeDeQueda;
     private int posNinjaY;
 	@Override
 	public void create () {
@@ -52,6 +53,8 @@ public class JungleRun extends ApplicationAdapter {
 		//propriedades de salto
 		alturaMinimaDeQueda=posNinjaY;
 		alturaMaximaDeSalto=posNinjaY+140;
+		velocidadeDeQueda = 400;
+
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class JungleRun extends ApplicationAdapter {
 		//controle de queda
 		if(posNinjaY>alturaMinimaDeQueda){
 			indiceSprite=7;
-			posNinjaY-=Gdx.graphics.getDeltaTime()*200;
+			posNinjaY-=Gdx.graphics.getDeltaTime()*velocidadeDeQueda;
 			salto=false;
 		}
 
@@ -72,7 +75,7 @@ public class JungleRun extends ApplicationAdapter {
 		if(Gdx.input.justTouched()){
 			if(!salto){
 				if(posNinjaY<=alturaMaximaDeSalto){
-				posNinjaY+=138+deltaTime;
+				posNinjaY+=137+deltaTime;
 				salto=true;
 				}
 			}
