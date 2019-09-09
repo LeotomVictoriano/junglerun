@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Random;
+
 public class JungleRun extends ApplicationAdapter {
 
     //Texturas e elementos para o jogo
@@ -33,7 +35,6 @@ public class JungleRun extends ApplicationAdapter {
 
     //propriedades para trabalbalhar com a altura da moeda gold
 	private int altura_minima_moeda;
-	private int altura_maxima_moeda;
 	private float indiceMoeda;
 	private int movimentoMoeda;
 
@@ -73,7 +74,6 @@ public class JungleRun extends ApplicationAdapter {
 
 		//inicializar a altura_minima e altura_maxima da moeda
 		altura_minima_moeda = 200;
-		altura_maxima_moeda = alturaMaximaDeSalto;
 		//inicializar o indice da moeda
 		indiceMoeda = 0;
 		movimentoMoeda = larguraPadraoX;
@@ -86,9 +86,15 @@ public class JungleRun extends ApplicationAdapter {
 		indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
 
 		//decrementar a posição da moeda
-		movimentoMoeda--;
+		movimentoMoeda -= 10;
 		if (movimentoMoeda == 0){
 			movimentoMoeda = larguraPadraoX;
+			//configurar uma altura padrão para a moeda
+			Random random = new Random();
+			int esc = random.nextInt(alturaMaximaDeSalto);
+			if (esc>altura_minima_moeda && esc<alturaMaximaDeSalto){
+				altura_minima_moeda = esc;
+			}
 		}
 
 		//controle de indice da moeda
