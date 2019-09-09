@@ -11,6 +11,7 @@ public class JungleRun extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture fundo;
     private Texture [] ninja;
+    private Texture [] coinGold;
 
 
     //dimensões de largura e altura padrão
@@ -29,6 +30,13 @@ public class JungleRun extends ApplicationAdapter {
 	private int alturaMinimaDeQueda;
 	private int velocidadeDeQueda;
     private int posNinjaY;
+
+    //propriedades para trabalbalhar com a altura da moeda gold
+	private int altura_minima_moeda;
+	private int altura_maxima_moeda;
+	private float indiceMoeda;
+	private int movimentoMoeda;
+
 	@Override
 	public void create () {
 
@@ -37,10 +45,18 @@ public class JungleRun extends ApplicationAdapter {
 	    salto=false;
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
+		coinGold = new Texture[6];
 	    //Preenchendo o vector com sprite personagem ao vector
 	    for (int i=0;i<10;i++){
 	    	ninja[i] = new Texture("ninja"+(i+1)+".png");
 		}
+
+	    //preencher o vector de moedas
+		for(int i=0;i<6;i++){
+			coinGold[i] = new Texture("coinGold"+(i+1)+".png");
+		}
+
+		//inicializar altura e largura padrão
 	    larguraPadraoX = Gdx.graphics.getWidth();
 	    alturaPadraoY = Gdx.graphics.getHeight();
 	    //Obter o tamanho do fundo
@@ -55,12 +71,30 @@ public class JungleRun extends ApplicationAdapter {
 		alturaMaximaDeSalto=posNinjaY+140;
 		velocidadeDeQueda = 400;
 
+		//inicializar a altura_minima e altura_maxima da moeda
+		altura_minima_moeda = 200;
+		altura_maxima_moeda = alturaMaximaDeSalto;
+		//inicializar o indice da moeda
+		indiceMoeda = 0;
+		movimentoMoeda = larguraPadraoX;
+
 	}
 
 	@Override
 	public void render () {
 		indiceSprite += Gdx.graphics.getDeltaTime() * 10;
+		indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
 
+		//decrementar a posição da moeda
+		movimentoMoeda--;
+		if (movimentoMoeda == 0){
+			movimentoMoeda = larguraPadraoX;
+		}
+
+		//controle de indice da moeda
+		if (indiceMoeda>5){
+			indiceMoeda = 0;
+		}
 		//controle de queda
 		if(posNinjaY>alturaMinimaDeQueda){
 			indiceSprite=7;
@@ -80,11 +114,13 @@ public class JungleRun extends ApplicationAdapter {
 				}
 			}
 		}
-		Gdx.app.log("Valor: ",""+indiceSprite);
+
         batch.begin();
 
         batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
         batch.draw(ninja[(int)indiceSprite],50,posNinjaY);
+        //adicionar moedas
+        batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
 
         batch.end();
 	}
