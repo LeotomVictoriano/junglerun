@@ -77,7 +77,6 @@ public class JungleRun extends ApplicationAdapter {
 		//inicializar o indice da moeda
 		indiceMoeda = 0;
 		movimentoMoeda = larguraPadraoX;
-
 	}
 
 	@Override
@@ -86,8 +85,9 @@ public class JungleRun extends ApplicationAdapter {
 		indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
 
 		//decrementar a posição da moeda
-		movimentoMoeda -= 10;
-		if (movimentoMoeda == 0){
+		movimentoMoeda -= 2;
+
+		if (movimentoMoeda == -80){
 			movimentoMoeda = larguraPadraoX;
 			//configurar uma altura padrão para a moeda
 			Random random = new Random();
@@ -124,6 +124,7 @@ public class JungleRun extends ApplicationAdapter {
         batch.begin();
 
         batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
+
         batch.draw(ninja[(int)indiceSprite],50,posNinjaY);
         //adicionar moedas
         batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
