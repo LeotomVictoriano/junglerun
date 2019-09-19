@@ -6,8 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
+import com.badlogic.gdx.audio.Music;
 import java.util.Random;
+import java.util.logging.FileHandler;
 
 public class JungleRun extends ApplicationAdapter {
 
@@ -46,7 +47,8 @@ public class JungleRun extends ApplicationAdapter {
 
 	//Variavel para trabalhar com estado do jogo
 	private int estadoJogo;
-
+	//propriedades de som
+    private Music somAmbiente;
 	@Override
 	public void create () {
 
@@ -57,7 +59,7 @@ public class JungleRun extends ApplicationAdapter {
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
 
-		//Instanciar o BitmapFont para trabalhar com fontes
+        //Instanciar o BitmapFont para trabalhar com fontes
 		fonte = new BitmapFont();
 		fonte.setColor(Color.GOLD);
 		fonte.getData().setScale(3);
@@ -96,6 +98,10 @@ public class JungleRun extends ApplicationAdapter {
 		//Inicializar a variável de pontuação e o estado do jogo
 		pontuacao = 0;
 		estadoJogo = 0;
+		//Logica de som
+		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
+		somAmbiente.play();
+		somAmbiente.setVolume(0.3f);
 	}
 
 	@Override
