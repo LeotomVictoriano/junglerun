@@ -128,6 +128,7 @@ public class JungleRun extends ApplicationAdapter {
 		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
 		somAmbiente.play();
 		somAmbiente.setVolume(0.3f);
+		somAmbiente.setLooping(true);
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
