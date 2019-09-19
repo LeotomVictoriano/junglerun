@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import java.util.Random;
 import java.util.logging.FileHandler;
 
@@ -49,6 +50,7 @@ public class JungleRun extends ApplicationAdapter {
 	private int estadoJogo;
 	//propriedades de som
     private Music somAmbiente;
+    private Sound somSalto;
 	@Override
 	public void create () {
 
@@ -99,9 +101,13 @@ public class JungleRun extends ApplicationAdapter {
 		pontuacao = 0;
 		estadoJogo = 0;
 		//Logica de som
+		//logica de som ambiente
 		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
 		somAmbiente.play();
 		somAmbiente.setVolume(0.3f);
+		//Logica de som de salto
+		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+
 	}
 
 	@Override
@@ -140,8 +146,10 @@ public class JungleRun extends ApplicationAdapter {
 				indiceSprite = 0;
 			}
 			if(Gdx.input.justTouched()){
+
 				if(!salto){
 					if(posNinjaY<=alturaMaximaDeSalto){
+						somSalto.play(0.1f);
 						posNinjaY+=137+deltaTime;
 						salto=true;
 					}
