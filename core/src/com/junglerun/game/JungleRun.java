@@ -2,7 +2,9 @@ package com.junglerun.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Random;
@@ -38,6 +40,13 @@ public class JungleRun extends ApplicationAdapter {
 	private float indiceMoeda;
 	private int movimentoMoeda;
 
+	//Variavel para trabalhar com pontuação
+	private BitmapFont fonte;
+	private int pontuacao;
+
+	//Variavel para trabalhar com estado do jogo
+	private int estadoJogo;
+
 	@Override
 	public void create () {
 
@@ -47,6 +56,12 @@ public class JungleRun extends ApplicationAdapter {
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
+
+		//Instanciar o BitmapFont para trabalhar com fontes
+		fonte = new BitmapFont();
+		fonte.setColor(Color.GOLD);
+		fonte.getData().setScale(3);
+
 	    //Preenchendo o vector com sprite personagem ao vector
 	    for (int i=0;i<10;i++){
 	    	ninja[i] = new Texture("ninja"+(i+1)+".png");
@@ -78,52 +93,62 @@ public class JungleRun extends ApplicationAdapter {
 		indiceMoeda = 0;
 		movimentoMoeda = larguraPadraoX;
 
+		//Inicializar a variável de pontuação e o estado do jogo
+		pontuacao = 0;
+		estadoJogo = 0;
 	}
 
 	@Override
 	public void render () {
-		indiceSprite += Gdx.graphics.getDeltaTime() * 10;
-		indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
 
-		//decrementar a posição da moeda
-		movimentoMoeda -= 10;
-		if (movimentoMoeda == 0){
-			movimentoMoeda = larguraPadraoX;
-			//configurar uma altura padrão para a moeda
-			Random random = new Random();
-			int esc = random.nextInt(alturaMaximaDeSalto);
-			if (esc>altura_minima_moeda && esc<alturaMaximaDeSalto){
-				altura_minima_moeda = esc;
-			}
-		}
+		if (estadoJogo == 0){
+			indiceSprite += Gdx.graphics.getDeltaTime() * 10;
+			indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
 
-		//controle de indice da moeda
-		if (indiceMoeda>5){
-			indiceMoeda = 0;
-		}
-		//controle de queda
-		if(posNinjaY>alturaMinimaDeQueda){
-			indiceSprite=7;
-			posNinjaY-=Gdx.graphics.getDeltaTime()*velocidadeDeQueda;
-			salto=false;
-		}
+			//decrementar a posição da moeda
+			movimentoMoeda -= 2;
 
-		//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
-		if (indiceSprite>9){
-			indiceSprite = 0;
-		}
-		if(Gdx.input.justTouched()){
-			if(!salto){
-				if(posNinjaY<=alturaMaximaDeSalto){
-				posNinjaY+=137+deltaTime;
-				salto=true;
+			if (movimentoMoeda == -80){
+				movimentoMoeda = larguraPadraoX;
+				//configurar uma altura padrão para a moeda
+				Random random = new Random();
+				int esc = random.nextInt(alturaMaximaDeSalto);
+				if (esc>altura_minima_moeda && esc<alturaMaximaDeSalto){
+					altura_minima_moeda = esc;
 				}
 			}
+
+			//controle de indice da moeda
+			if (indiceMoeda>5){
+				indiceMoeda = 0;
+			}
+			//controle de queda
+			if(posNinjaY>alturaMinimaDeQueda){
+				indiceSprite=7;
+				posNinjaY-=Gdx.graphics.getDeltaTime()*velocidadeDeQueda;
+				salto=false;
+			}
+
+			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
+			if (indiceSprite>9){
+				indiceSprite = 0;
+			}
+			if(Gdx.input.justTouched()){
+				if(!salto){
+					if(posNinjaY<=alturaMaximaDeSalto){
+						posNinjaY+=137+deltaTime;
+						salto=true;
+					}
+				}
+			}
+
 		}
 
         batch.begin();
 
         batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
+		//Inicializar a posição da fonte na tela
+		fonte.draw(batch,"Pontuação: "+pontuacao,(larguraPadraoX/2)-120,alturaPadraoY - 50);
         batch.draw(ninja[(int)indiceSprite],50,posNinjaY);
         //adicionar moedas
         batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
