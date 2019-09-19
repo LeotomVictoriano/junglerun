@@ -6,12 +6,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
+
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+
 import java.util.Random;
+import java.util.logging.FileHandler;
 
 public class JungleRun extends ApplicationAdapter {
 
@@ -55,7 +61,9 @@ public class JungleRun extends ApplicationAdapter {
 
 	//Variavel para trabalhar com estado do jogo
 	private int estadoJogo;
-
+	//propriedades de som
+    private Music somAmbiente;
+    private Sound somSalto;
 	@Override
 	public void create () {
 
@@ -72,6 +80,9 @@ public class JungleRun extends ApplicationAdapter {
 		rectanglePersonagem = new Rectangle();
 
 		//Instanciar o BitmapFont para trabalhar com fontes
+
+        //Instanciar o BitmapFont para trabalhar com fontes
+
 		fonte = new BitmapFont();
 		fonte.setColor(Color.GOLD);
 		fonte.getData().setScale(3);
@@ -110,6 +121,14 @@ public class JungleRun extends ApplicationAdapter {
 		//Inicializar a variável de pontuação e o estado do jogo
 		pontuacao = 0;
 		estadoJogo = 0;
+		//Logica de som
+		//logica de som ambiente
+		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
+		somAmbiente.play();
+		somAmbiente.setVolume(0.3f);
+		//Logica de som de salto
+		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+
 	}
 
 	@Override
@@ -152,8 +171,10 @@ public class JungleRun extends ApplicationAdapter {
 				indiceSprite = 0;
 			}
 			if(Gdx.input.justTouched()){
+
 				if(!salto){
 					if(posNinjaY<=alturaMaximaDeSalto){
+						somSalto.play(0.1f);
 						posNinjaY+=137+deltaTime;
 						salto=true;
 					}
