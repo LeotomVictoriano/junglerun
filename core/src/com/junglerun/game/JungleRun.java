@@ -64,6 +64,8 @@ public class JungleRun extends ApplicationAdapter {
 	//propriedades de som
     private Music somAmbiente;
     private Sound somSalto;
+    private Sound somMoeda;
+
 	@Override
 	public void create () {
 
@@ -128,6 +130,7 @@ public class JungleRun extends ApplicationAdapter {
 		somAmbiente.setVolume(0.3f);
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
 
 	}
 
@@ -210,6 +213,7 @@ public class JungleRun extends ApplicationAdapter {
 				altura_minima_moeda = esc;
 			}
 			pontuacao++;
+			somMoeda.play(0.5f);
 		}
 	}
 	
