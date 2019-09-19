@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
 
@@ -16,6 +20,11 @@ public class JungleRun extends ApplicationAdapter {
     private Texture fundo;
     private Texture [] ninja;
     private Texture [] coinGold;
+
+    //declaração das variáveis para trabalhar com formas para colisões
+	private ShapeRenderer renderer; //permite desenhar as formas
+	private Circle circuloMoeda; //circulo da moeda
+	private Rectangle rectanglePersonagem; //rectangulo para o personagem
 
 
     //dimensões de largura e altura padrão
@@ -56,6 +65,11 @@ public class JungleRun extends ApplicationAdapter {
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
+
+		//instanciar as formas
+		renderer = new ShapeRenderer();
+		circuloMoeda = new Circle();
+		rectanglePersonagem = new Rectangle();
 
 		//Instanciar o BitmapFont para trabalhar com fontes
 		fonte = new BitmapFont();
@@ -101,6 +115,11 @@ public class JungleRun extends ApplicationAdapter {
 	@Override
 	public void render () {
 
+		//Variável aleatória para Escolher a posição de altura da moeda
+		Random random = new Random();
+		int esc = random.nextInt(alturaPadraoY-200);
+
+		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
 			indiceSprite += Gdx.graphics.getDeltaTime() * 10;
 			indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
@@ -108,12 +127,11 @@ public class JungleRun extends ApplicationAdapter {
 			//decrementar a posição da moeda
 			movimentoMoeda -= 2;
 
+			//Se a moeda sair da tela sem ser capturada então
 			if (movimentoMoeda == -80){
 				movimentoMoeda = larguraPadraoX;
 				//configurar uma altura padrão para a moeda
-				Random random = new Random();
-				int esc = random.nextInt(alturaMaximaDeSalto);
-				if (esc>altura_minima_moeda && esc<alturaMaximaDeSalto){
+				if (esc>altura_minima_moeda){
 					altura_minima_moeda = esc;
 				}
 			}
@@ -148,12 +166,30 @@ public class JungleRun extends ApplicationAdapter {
 
         batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
 		//Inicializar a posição da fonte na tela
-		fonte.draw(batch,"Pontuação: "+pontuacao,(larguraPadraoX/2)-120,alturaPadraoY - 50);
+		fonte.draw(batch,"Pontuação: "+pontuacao,(larguraPadraoX/2)-120,alturaPadraoY - 30);
         batch.draw(ninja[(int)indiceSprite],50,posNinjaY);
         //adicionar moedas
         batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
 
         batch.end();
+
+        //iniciar configurações para desenhar as formas
+		circuloMoeda.set(movimentoMoeda+33,altura_minima_moeda + 45,39);
+		rectanglePersonagem.set(70,posNinjaY,ninja[0].getWidth()-30,ninja[0].getHeight()-40);
+
+
+		/* *****************************************************
+		* Capturando moeda
+		* */
+		if (Intersector.overlaps(circuloMoeda,rectanglePersonagem)){
+			movimentoMoeda = larguraPadraoX + 130;
+
+			//Escolher a posição aletória da moeda quando a mesma for capturada
+			if (esc>altura_minima_moeda){
+				altura_minima_moeda = esc;
+			}
+			pontuacao++;
+		}
 	}
 	
 	@Override
