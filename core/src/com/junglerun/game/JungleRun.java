@@ -226,6 +226,9 @@ public class JungleRun extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
+        somAmbiente.dispose();
+        somSalto.dispose();
+        somMoeda.dispose();
         batch.dispose();
 	}
 }
