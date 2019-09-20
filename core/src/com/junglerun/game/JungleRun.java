@@ -49,7 +49,6 @@ public class JungleRun extends ApplicationAdapter {
 	private int alturaMinimaDeQueda;
 	private int velocidadeSalto;
     private int posNinjaY;
-    private int valocidadeDeSalto;
 
     //propriedades para trabalbalhar com a altura da moeda gold
 	private int altura_minima_moeda;
@@ -145,8 +144,8 @@ public class JungleRun extends ApplicationAdapter {
 
 		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
-			indiceSprite += Gdx.graphics.getDeltaTime() * 10;
-			indiceMoeda += Gdx.graphics.getDeltaTime() * 10;
+			indiceSprite += deltaTime * 10;
+			indiceMoeda += deltaTime * 10;
 
 			//decrementar a posição da moeda
 			movimentoMoeda -= 2;
@@ -227,7 +226,6 @@ public class JungleRun extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-
         batch.dispose();
 	}
 }
