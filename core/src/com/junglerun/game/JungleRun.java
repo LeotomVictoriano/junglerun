@@ -47,8 +47,9 @@ public class JungleRun extends ApplicationAdapter {
 	private boolean salto;
 	private int alturaMaximaDeSalto;
 	private int alturaMinimaDeQueda;
-	private int velocidadeDeQueda;
+	private int velocidadeSalto;
     private int posNinjaY;
+    private int valocidadeDeSalto;
 
     //propriedades para trabalbalhar com a altura da moeda gold
 	private int altura_minima_moeda;
@@ -112,7 +113,7 @@ public class JungleRun extends ApplicationAdapter {
 		//propriedades de salto
 		alturaMinimaDeQueda=posNinjaY;
 		alturaMaximaDeSalto=posNinjaY+140;
-		velocidadeDeQueda = 400;
+		velocidadeSalto=14;
 
 		//inicializar a altura_minima e altura_maxima da moeda
 		altura_minima_moeda = 200;
@@ -163,23 +164,34 @@ public class JungleRun extends ApplicationAdapter {
 			if (indiceMoeda>5){
 				indiceMoeda = 0;
 			}
-			//controle de queda
-			if(posNinjaY>alturaMinimaDeQueda){
-				indiceSprite=7;
-				posNinjaY-=Gdx.graphics.getDeltaTime()*velocidadeDeQueda;
-
-			}
 
 			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
 			if (indiceSprite>9){
 				indiceSprite = 0;
 			}
 			if(Gdx.input.justTouched()){
-					if(posNinjaY<=alturaMaximaDeSalto && posNinjaY<=alturaMinimaDeQueda){
+				//verificar se o ninja está no chão
+			    if(posNinjaY<=alturaMaximaDeSalto && posNinjaY<=alturaMinimaDeQueda){
 						somSalto.play(0.1f);
-						posNinjaY+=137+deltaTime;
+						salto=true;
 					}
 				}
+			//verficar se o jogador está em salto
+			if(salto){
+				//se esta em salto, incrementar a posicao em Y
+                posNinjaY+=velocidadeSalto+deltaTime;
+                //verificar se o ninja ja atingiu a altura máxima, para indicar o fim do salto
+                if(posNinjaY>=alturaMaximaDeSalto){
+                    salto=false;
+                }
+            }
+			//controle de cada, verificando se o salto ja terminou
+			if(!salto){
+				if(posNinjaY>=alturaMaximaDeSalto || posNinjaY>alturaMinimaDeQueda){
+                    indiceSprite=7;
+                    posNinjaY-=velocidadeSalto;
+                }
+			}
 		}
 
         batch.begin();
