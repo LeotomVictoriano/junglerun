@@ -167,7 +167,7 @@ public class JungleRun extends ApplicationAdapter {
 			if(posNinjaY>alturaMinimaDeQueda){
 				indiceSprite=7;
 				posNinjaY-=Gdx.graphics.getDeltaTime()*velocidadeDeQueda;
-				salto=false;
+
 			}
 
 			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
@@ -175,16 +175,11 @@ public class JungleRun extends ApplicationAdapter {
 				indiceSprite = 0;
 			}
 			if(Gdx.input.justTouched()){
-
-				if(!salto){
-					if(posNinjaY<=alturaMaximaDeSalto){
+					if(posNinjaY<=alturaMaximaDeSalto && posNinjaY<=alturaMinimaDeQueda){
 						somSalto.play(0.1f);
 						posNinjaY+=137+deltaTime;
-						salto=true;
 					}
 				}
-			}
-
 		}
 
         batch.begin();
