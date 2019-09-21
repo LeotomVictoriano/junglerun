@@ -17,7 +17,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 import java.util.Random;
-import java.util.logging.FileHandler;
 
 public class JungleRun extends ApplicationAdapter {
 
@@ -47,7 +46,7 @@ public class JungleRun extends ApplicationAdapter {
 	private boolean salto;
 	private int alturaMaximaDeSalto;
 	private int alturaMinimaDeQueda;
-	private int velocidadeSalto;
+	private float velocidadeJogo;
     private int posNinjaY;
 
     //propriedades para trabalbalhar com a altura da moeda gold
@@ -113,7 +112,7 @@ public class JungleRun extends ApplicationAdapter {
 		/*
 		* Altura maxima definida a 80% mais alto que a posicao inicial do jogador*/
 		alturaMaximaDeSalto=posNinjaY+(int)(posNinjaY*0.8);
-		velocidadeSalto=14;
+		velocidadeJogo =8;
 
 		//inicializar a altura_minima e altura_maxima da moeda
 		altura_minima_moeda = 200;
@@ -140,17 +139,19 @@ public class JungleRun extends ApplicationAdapter {
 	public void render () {
 		//atribuindo o valor aleatorio
         deltaTime=Gdx.graphics.getDeltaTime();
+		//incrementando a velocidade de jogo a cada ciclo de render
+		velocidadeJogo+=0.001;
 		//Variável aleatória para Escolher a posição de altura da moeda
 		Random random = new Random();
 		int esc = random.nextInt(alturaPadraoY-200);
 
 		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
-			indiceSprite += deltaTime * 10;
+			indiceSprite += deltaTime * velocidadeJogo;
 			indiceMoeda += deltaTime * 10;
 
 			//decrementar a posição da moeda
-			movimentoMoeda -= 2;
+			movimentoMoeda -= velocidadeJogo;
 
 			//Se a moeda sair da tela sem ser capturada então
 			if (movimentoMoeda == -80){
@@ -180,7 +181,7 @@ public class JungleRun extends ApplicationAdapter {
 			//verficar se o jogador está em salto
 			if(salto){
 				//se esta em salto, incrementar a posicao em Y
-                posNinjaY+=velocidadeSalto+deltaTime;
+                posNinjaY+= velocidadeJogo +deltaTime;
                 //verificar se o ninja ja atingiu a altura máxima, para indicar o fim do salto
                 if(posNinjaY>=alturaMaximaDeSalto){
                     salto=false;
@@ -190,7 +191,7 @@ public class JungleRun extends ApplicationAdapter {
 			if(!salto){
 				if(posNinjaY>=alturaMaximaDeSalto || posNinjaY>alturaMinimaDeQueda){
                     indiceSprite=7;
-                    posNinjaY-=velocidadeSalto;
+                    posNinjaY-= velocidadeJogo;
                 }
 			}
 		}
