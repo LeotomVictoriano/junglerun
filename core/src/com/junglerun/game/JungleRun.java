@@ -110,7 +110,9 @@ public class JungleRun extends ApplicationAdapter {
 		indiceSprite = 0;
 		//propriedades de salto
 		alturaMinimaDeQueda=posNinjaY;
-		alturaMaximaDeSalto=posNinjaY+140;
+		/*
+		* Altura maxima definida a 80% mais alto que a posicao inicial do jogador*/
+		alturaMaximaDeSalto=posNinjaY+(int)(posNinjaY*0.8);
 		velocidadeSalto=14;
 
 		//inicializar a altura_minima e altura_maxima da moeda
