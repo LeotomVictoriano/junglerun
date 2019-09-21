@@ -68,7 +68,6 @@ public class JungleRun extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-
 	    batch = new SpriteBatch();
 	    fundo = new Texture("fundo1.png");
 	    salto=false;
@@ -137,7 +136,8 @@ public class JungleRun extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-
+		//atribuindo o valor aleatorio
+        deltaTime=Gdx.graphics.getDeltaTime();
 		//Variável aleatória para Escolher a posição de altura da moeda
 		Random random = new Random();
 		int esc = random.nextInt(alturaPadraoY-200);
