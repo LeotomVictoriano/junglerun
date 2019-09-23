@@ -108,7 +108,7 @@ public class JungleRun extends ApplicationAdapter {
 	    //Inicializar o indice do Sprite
 		indiceSprite = 0;
 		//propriedades de salto
-		alturaMinimaDeQueda=posNinjaY;
+		alturaMinimaDeQueda=(int)(alturaFundo*0.30);
 		/*
 		* Altura maxima definida a 80% mais alto que a posicao inicial do jogador*/
 		alturaMaximaDeSalto=posNinjaY+(int)(posNinjaY*0.8);
@@ -148,7 +148,7 @@ public class JungleRun extends ApplicationAdapter {
 		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
 			indiceSprite += deltaTime * velocidadeJogo;
-			indiceMoeda += deltaTime * 10;
+			indiceMoeda += deltaTime * velocidadeJogo;
 
 			//decrementar a posição da moeda
 			movimentoMoeda -= velocidadeJogo;
