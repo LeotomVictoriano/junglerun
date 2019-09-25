@@ -26,6 +26,11 @@ public class JungleRun extends ApplicationAdapter {
     private Texture [] ninja;
     private Texture [] coinGold;
 
+    //Texturas do ambiente para o fundo do jogo
+	private Texture mont1;
+	private Texture mont2;
+	private Texture mont3;
+
     //declaração das variáveis para trabalhar com formas para colisões
 	private ShapeRenderer renderer; //permite desenhar as formas
 	private Circle circuloMoeda; //circulo da moeda
@@ -65,6 +70,11 @@ public class JungleRun extends ApplicationAdapter {
     private Sound somSalto;
     private Sound somMoeda;
 
+    //Variável para trabalhar com o movimento do ambiente do fundo;
+	private int movimento_ambiente1;
+	private int movimento_ambiente2;
+	private int movimento_ambiente3;
+
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
@@ -73,6 +83,11 @@ public class JungleRun extends ApplicationAdapter {
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
+
+		//inicializando as novas texturas para o ambiente do jogo
+		mont1 = new Texture("Mont01.png");
+		mont2 = new Texture("Mont02.png");
+		mont3 = new Texture("Mont03.png");
 
 		//instanciar as formas
 		renderer = new ShapeRenderer();
@@ -133,6 +148,10 @@ public class JungleRun extends ApplicationAdapter {
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
 
+		//inicializar o movimento do ambiente do fundo
+		movimento_ambiente1 = 300;
+		movimento_ambiente2 = 400;
+		movimento_ambiente3 = 500;
 	}
 
 	@Override
@@ -143,18 +162,38 @@ public class JungleRun extends ApplicationAdapter {
 		velocidadeJogo+=0.001;
 		//Variável aleatória para Escolher a posição de altura da moeda
 		Random random = new Random();
-		int esc = random.nextInt(alturaPadraoY-200);
+		int esc = random.nextInt(alturaPadraoY-250);
 
 		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
 			indiceSprite += deltaTime * velocidadeJogo;
 			indiceMoeda += deltaTime * velocidadeJogo;
 
+			/*****************************************************
+			 * Trabalhando com os movimentos dos troncos do fundo
+			* */
+			movimento_ambiente1 -= velocidadeJogo;
+			movimento_ambiente2 -= velocidadeJogo;
+			movimento_ambiente3 -= velocidadeJogo;
+
+			/****************************************************
+             * Condições que tratam o movimento dos troncos quando já não estão a ser exibidos na tela
+			* */
+			if (movimento_ambiente1 < -100 ){
+			    movimento_ambiente1 = larguraPadraoX+100;
+            }
+			if (movimento_ambiente2 < -150){
+			    movimento_ambiente2 = larguraPadraoX+150;
+            }
+			if (movimento_ambiente3 < -200){
+			    movimento_ambiente3 = larguraPadraoX+200;
+            }
+
 			//decrementar a posição da moeda
 			movimentoMoeda -= velocidadeJogo;
 
 			//Se a moeda sair da tela sem ser capturada então
-			if (movimentoMoeda < -5 ){
+			if (movimentoMoeda < -100 ){
 				movimentoMoeda = larguraPadraoX;
 				//configurar uma altura padrão para a moeda
 				if (esc>altura_minima_moeda){
@@ -199,9 +238,15 @@ public class JungleRun extends ApplicationAdapter {
         batch.begin();
 
         batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
+
+        //desenhar o ambiente para movimento do fundo
+        batch.draw(mont1,movimento_ambiente1,204);
+        batch.draw(mont2,movimento_ambiente2,204);
+        batch.draw(mont3,movimento_ambiente3,204);
+
 		//Inicializar a posição da fonte na tela
 		fonte.draw(batch,"Pontuação: "+pontuacao,(larguraPadraoX/2)-120,alturaPadraoY - 30);
-        batch.draw(ninja[(int)indiceSprite],50,posNinjaY);
+        batch.draw(ninja[(int)indiceSprite],150,posNinjaY);
         //adicionar moedas
         batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
 
