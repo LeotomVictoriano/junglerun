@@ -154,7 +154,7 @@ public class JungleRun extends ApplicationAdapter {
 			movimentoMoeda -= velocidadeJogo;
 
 			//Se a moeda sair da tela sem ser capturada então
-			if (movimentoMoeda == -80){
+			if (movimentoMoeda < -5 ){
 				movimentoMoeda = larguraPadraoX;
 				//configurar uma altura padrão para a moeda
 				if (esc>altura_minima_moeda){
