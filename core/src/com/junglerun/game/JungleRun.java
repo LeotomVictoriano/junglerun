@@ -254,8 +254,7 @@ public class JungleRun extends ApplicationAdapter {
 
         //iniciar configurações para desenhar as formas
 		circuloMoeda.set(movimentoMoeda+33,altura_minima_moeda + 45,39);
-		rectanglePersonagem.set(70,posNinjaY,ninja[0].getWidth()-30,ninja[0].getHeight()-40);
-
+		rectanglePersonagem.set(150,posNinjaY,ninja[0].getWidth(),ninja[0].getHeight());
 
 		/* *****************************************************
 		* Capturando moeda
