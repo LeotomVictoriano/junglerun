@@ -30,6 +30,7 @@ public class JungleRun extends ApplicationAdapter {
 	private Texture mont1;
 	private Texture mont2;
 	private Texture mont3;
+	private Texture sun;
 
     //declaração das variáveis para trabalhar com formas para colisões
 	private ShapeRenderer renderer; //permite desenhar as formas
