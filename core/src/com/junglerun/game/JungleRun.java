@@ -131,7 +131,7 @@ public class JungleRun extends ApplicationAdapter {
 		velocidadeJogo =8;
 
 		//inicializar a altura_minima e altura_maxima da moeda
-		altura_minima_moeda = 200;
+		altura_minima_moeda = 430;
 		//inicializar o indice da moeda
 		indiceMoeda = 0;
 		movimentoMoeda = larguraPadraoX;
@@ -161,9 +161,6 @@ public class JungleRun extends ApplicationAdapter {
         deltaTime=Gdx.graphics.getDeltaTime();
 		//incrementando a velocidade de jogo a cada ciclo de render
 		velocidadeJogo+=0.001;
-		//Variável aleatória para Escolher a posição de altura da moeda
-		Random random = new Random();
-		int esc = random.nextInt(alturaPadraoY-250);
 
 		//Estado do Jogo = 0, Inicio do Jogo
 		if (estadoJogo == 0){
@@ -196,10 +193,6 @@ public class JungleRun extends ApplicationAdapter {
 			//Se a moeda sair da tela sem ser capturada então
 			if (movimentoMoeda < -100 ){
 				movimentoMoeda = larguraPadraoX;
-				//configurar uma altura padrão para a moeda
-				if (esc>altura_minima_moeda){
-					altura_minima_moeda = esc;
-				}
 			}
 
 			//controle de indice da moeda
@@ -264,10 +257,7 @@ public class JungleRun extends ApplicationAdapter {
 		if (Intersector.overlaps(circuloMoeda,rectanglePersonagem)){
 			movimentoMoeda = larguraPadraoX + 130;
 
-			//Escolher a posição aletória da moeda quando a mesma for capturada
-			if (esc>altura_minima_moeda){
-				altura_minima_moeda = esc;
-			}
+			//Aumentar a pontuação quando a moeda for capturada e tocar o som de captura da moeda
 			pontuacao++;
 			somMoeda.play(0.5f);
 		}
