@@ -163,9 +163,6 @@ public class JungleRun extends ApplicationAdapter {
 		//Logica de som
 		//logica de som ambiente
 		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
-		somAmbiente.play();
-		somAmbiente.setVolume(0.3f);
-		somAmbiente.setLooping(true);
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
@@ -190,6 +187,9 @@ public class JungleRun extends ApplicationAdapter {
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
 			batch.end();
 			if (Gdx.input.justTouched()){
+				somAmbiente.play();
+				somAmbiente.setVolume(0.3f);
+				somAmbiente.setLooping(true);
 				estadoJogo = 1;
 			}
 		}
