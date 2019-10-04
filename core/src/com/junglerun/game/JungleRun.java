@@ -43,6 +43,8 @@ public class JungleRun extends ApplicationAdapter {
 	private ShapeRenderer renderer; //permite desenhar as formas
 	private Circle circuloMoeda; //circulo da moeda
 	private Rectangle rectanglePersonagem; //rectangulo para o personagem
+	private Rectangle rect_tronco;
+	private Rectangle rect_madeira;
 
 
     //dimensões de largura e altura padrão
@@ -111,6 +113,8 @@ public class JungleRun extends ApplicationAdapter {
 		renderer = new ShapeRenderer();
 		circuloMoeda = new Circle();
 		rectanglePersonagem = new Rectangle();
+		rect_tronco = new Rectangle();
+		rect_madeira = new Rectangle();
 
 		//Instanciar o BitmapFont para trabalhar com fontes
 
@@ -166,14 +170,6 @@ public class JungleRun extends ApplicationAdapter {
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
 
-		//inicializar o movimento do ambiente do fundo
-		movimento_ambiente1 = 300;
-		movimento_ambiente2 = 400;
-
-
-		//Inicializar a posição horizontal dos obstaculos
-		movimento_tronco = larguraPadraoX+150;
-		movimento_madeira = larguraPadraoX+1000;
 	}
 
 	@Override
@@ -181,6 +177,14 @@ public class JungleRun extends ApplicationAdapter {
 
 		//Estado do jogo 0=> Apresentação do menu do jogo
 		if (estadoJogo == 0){
+            //Inicializar a posição horizontal dos obstaculos
+            movimento_tronco = larguraPadraoX+150;
+            movimento_madeira = larguraPadraoX+1000;
+            //inicializar o movimento do ambiente do fundo
+            movimento_ambiente1 = 300;
+            movimento_ambiente2 = 400;
+            movimento_ambiente3 = 600;
+
 			batch.begin();
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
 			batch.end();
@@ -229,7 +233,7 @@ public class JungleRun extends ApplicationAdapter {
 			/****************************************************
 			 * Condições que tratam o movimento dos troncos quando já não estão a ser exibidos na tela
 			 * */
-			if (movimento_ambiente1 < -100) {
+			if (movimento_ambiente1 < -150) {
 				movimento_ambiente1 = larguraPadraoX + 100;
 			}
 			if (movimento_ambiente2 < -150) {
@@ -305,7 +309,23 @@ public class JungleRun extends ApplicationAdapter {
 
 			//iniciar configurações para desenhar as formas
 			circuloMoeda.set(movimentoMoeda + 33, altura_minima_moeda + 45, 39);
-			rectanglePersonagem.set(70, posNinjaY, ninja[0].getWidth() - 30, ninja[0].getHeight() - 40);
+			rectanglePersonagem.set(160, posNinjaY, ninja[0].getWidth()-20, ninja[0].getHeight()-10);
+
+
+			//Instanciar configurações das formas para os obstaculos
+			rect_tronco.set(movimento_tronco,204,obst_tronco.getWidth(),obst_tronco.getHeight());
+			rect_madeira.set(movimento_madeira,204,obst_madeira.getWidth(),obst_madeira.getHeight()-20);
+
+
+			/********************************************
+			 * Teste de desenho
+			 */
+			/*renderer.begin(ShapeRenderer.ShapeType.Filled);
+				renderer.rect(rect_tronco.x,rect_tronco.y,rect_tronco.width,rect_tronco.height);
+				renderer.rect(rectanglePersonagem.x,rectanglePersonagem.y,rectanglePersonagem.width,rectanglePersonagem.height);
+				renderer.rect(rect_madeira.x,rect_madeira.y,rect_madeira.width,rect_madeira.height);
+				renderer.setColor(Color.BLUE);
+			renderer.end();*/
 
 
 			/* *****************************************************
@@ -318,6 +338,14 @@ public class JungleRun extends ApplicationAdapter {
 				pontuacao++;
 				somMoeda.play(0.5f);
 			}
+			/**************************************************
+			 *Detectando colisão com os objetos e obstaculos
+			 */
+			if (Intersector.overlaps(rectanglePersonagem,rect_tronco) || Intersector.overlaps(rectanglePersonagem,rect_madeira)){
+				Gdx.app.log("Col","Colisão existente");
+				//estadoJogo = 2;
+			}
+
 		}
 		//Estado do jogo 2=> GAMEOVER
 		if (estadoJogo == 2){
