@@ -79,6 +79,7 @@ public class JungleRun extends ApplicationAdapter {
     private Music somAmbiente;
     private Sound somSalto;
     private Sound somMoeda;
+    private Sound somGameOver;
 
     //Variável para trabalhar com o movimento do ambiente do fundo;
 	private int movimento_ambiente1;
@@ -133,7 +134,6 @@ public class JungleRun extends ApplicationAdapter {
 		for(int i=0;i<6;i++){
 			coinGold[i] = new Texture("coinGold"+(i+1)+".png");
 		}
-
 		//inicializar altura e largura padrão
 	    larguraPadraoX = Gdx.graphics.getWidth();
 	    alturaPadraoY = Gdx.graphics.getHeight();
@@ -169,6 +169,7 @@ public class JungleRun extends ApplicationAdapter {
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
+		somGameOver = Gdx.audio.newSound(Gdx.files.internal("GameOverSound.wav"));
 
 	}
 
@@ -255,7 +256,6 @@ public class JungleRun extends ApplicationAdapter {
 			if (indiceMoeda > 5) {
 				indiceMoeda = 0;
 			}
-
 			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
 			if (indiceSprite > 9) {
 				indiceSprite = 0;
@@ -343,6 +343,7 @@ public class JungleRun extends ApplicationAdapter {
 			 */
 			if (Intersector.overlaps(rectanglePersonagem,rect_tronco) || Intersector.overlaps(rectanglePersonagem,rect_madeira)){
 				Gdx.app.log("Col","Colisão existente");
+				somGameOver.play(0.5f);
 				//estadoJogo = 2;
 			}
 
