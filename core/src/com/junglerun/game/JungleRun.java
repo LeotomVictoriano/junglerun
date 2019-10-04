@@ -31,6 +31,14 @@ public class JungleRun extends ApplicationAdapter {
 	private Texture mont2;
 	private Texture mont3;
 
+	//Textura para trabalhar com obstaculos
+	private Texture obst_tronco;
+	private Texture obst_madeira;
+
+	//Texturas para menu e GameOver
+	private Texture menu;
+	private Texture game_over;
+
     //declaração das variáveis para trabalhar com formas para colisões
 	private ShapeRenderer renderer; //permite desenhar as formas
 	private Circle circuloMoeda; //circulo da moeda
@@ -75,6 +83,10 @@ public class JungleRun extends ApplicationAdapter {
 	private int movimento_ambiente2;
 	private int movimento_ambiente3;
 
+	//Variáveis para controlo do movimento horizontal do obstaculo
+	private int movimento_tronco;
+	private int movimento_madeira;
+
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
@@ -88,6 +100,12 @@ public class JungleRun extends ApplicationAdapter {
 		mont1 = new Texture("Mont01.png");
 		mont2 = new Texture("Mont02.png");
 		mont3 = new Texture("Mont03.png");
+
+		//Inicializar as Texturas de Obstaculos
+		obst_tronco =  new Texture("obstaculo_tronco.png");
+		obst_madeira = new Texture("obstaculo_madeira_03.png");
+		menu = new Texture("Menu.png");
+		game_over = new Texture("GameOver.png");
 
 		//instanciar as formas
 		renderer = new ShapeRenderer();
@@ -130,7 +148,7 @@ public class JungleRun extends ApplicationAdapter {
 		velocidadeJogo =8;
 
 		//inicializar a altura_minima e altura_maxima da moeda
-		altura_minima_moeda = 200;
+		altura_minima_moeda = 430;
 		//inicializar o indice da moeda
 		indiceMoeda = 0;
 		movimentoMoeda = larguraPadraoX;
@@ -151,124 +169,165 @@ public class JungleRun extends ApplicationAdapter {
 		//inicializar o movimento do ambiente do fundo
 		movimento_ambiente1 = 300;
 		movimento_ambiente2 = 400;
-		movimento_ambiente3 = 500;
+
+
+		//Inicializar a posição horizontal dos obstaculos
+		movimento_tronco = larguraPadraoX+150;
+		movimento_madeira = larguraPadraoX+1000;
 	}
 
 	@Override
 	public void render () {
-		//atribuindo o valor aleatorio
-        deltaTime=Gdx.graphics.getDeltaTime();
-		//incrementando a velocidade de jogo a cada ciclo de render
-		velocidadeJogo+=0.001;
-		//Variável aleatória para Escolher a posição de altura da moeda
-		Random random = new Random();
-		int esc = random.nextInt(alturaPadraoY-250);
 
-		//Estado do Jogo = 0, Inicio do Jogo
+		//Estado do jogo 0=> Apresentação do menu do jogo
 		if (estadoJogo == 0){
+			batch.begin();
+			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
+			batch.end();
+			if (Gdx.input.justTouched()){
+				estadoJogo = 1;
+			}
+		}
+		//estado do jogo 0 => Inicio do Jogo
+		if (estadoJogo == 1) {
+
+			//atribuindo o valor aleatorio
+			deltaTime = Gdx.graphics.getDeltaTime();
+			//incrementando a velocidade de jogo a cada ciclo de render
+			velocidadeJogo += 0.001;
+
 			indiceSprite += deltaTime * velocidadeJogo;
 			indiceMoeda += deltaTime * velocidadeJogo;
+			movimento_tronco -= velocidadeJogo;
+			movimento_madeira -= velocidadeJogo;
+
+			/*************************************
+			 * Controlar movimento dos obstaculos
+			 * */
+			if (movimento_tronco < -200){
+				if(movimento_madeira<-100){
+					movimento_tronco = larguraPadraoX + 150;
+				}else{
+					movimento_tronco = -200;
+				}
+			}
+			if (movimento_madeira < -200){
+				if(movimento_tronco < -100){
+					movimento_madeira = larguraPadraoX + 500;
+				}else{
+					movimento_madeira = -500;
+				}
+			}
 
 			/*****************************************************
 			 * Trabalhando com os movimentos dos troncos do fundo
-			* */
+			 * */
 			movimento_ambiente1 -= velocidadeJogo;
 			movimento_ambiente2 -= velocidadeJogo;
 			movimento_ambiente3 -= velocidadeJogo;
 
 			/****************************************************
-             * Condições que tratam o movimento dos troncos quando já não estão a ser exibidos na tela
-			* */
-			if (movimento_ambiente1 < -100 ){
-			    movimento_ambiente1 = larguraPadraoX+100;
-            }
-			if (movimento_ambiente2 < -150){
-			    movimento_ambiente2 = larguraPadraoX+150;
-            }
-			if (movimento_ambiente3 < -200){
-			    movimento_ambiente3 = larguraPadraoX+200;
-            }
+			 * Condições que tratam o movimento dos troncos quando já não estão a ser exibidos na tela
+			 * */
+			if (movimento_ambiente1 < -100) {
+				movimento_ambiente1 = larguraPadraoX + 100;
+			}
+			if (movimento_ambiente2 < -150) {
+				movimento_ambiente2 = larguraPadraoX + 150;
+			}
+			if (movimento_ambiente3 < -200) {
+				movimento_ambiente3 = larguraPadraoX + 200;
+			}
 
 			//decrementar a posição da moeda
 			movimentoMoeda -= velocidadeJogo;
 
 			//Se a moeda sair da tela sem ser capturada então
-			if (movimentoMoeda < -100 ){
+			if (movimentoMoeda < -100) {
 				movimentoMoeda = larguraPadraoX;
-				//configurar uma altura padrão para a moeda
-				if (esc>altura_minima_moeda){
-					altura_minima_moeda = esc;
-				}
 			}
 
 			//controle de indice da moeda
-			if (indiceMoeda>5){
+			if (indiceMoeda > 5) {
 				indiceMoeda = 0;
 			}
 
 			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
-			if (indiceSprite>9){
+			if (indiceSprite > 9) {
 				indiceSprite = 0;
 			}
-			if(Gdx.input.justTouched()){
+			if (Gdx.input.justTouched()) {
 				//verificar se o ninja está no chão
-			    if(posNinjaY<=alturaMaximaDeSalto && posNinjaY<=alturaMinimaDeQueda){
-						somSalto.play(0.1f);
-						salto=true;
-					}
+				if (posNinjaY <= alturaMaximaDeSalto && posNinjaY <= alturaMinimaDeQueda) {
+					somSalto.play(0.1f);
+					salto = true;
 				}
+			}
 			//verficar se o jogador está em salto
-			if(salto){
+			if (salto) {
 				//se esta em salto, incrementar a posicao em Y
-                posNinjaY+= velocidadeJogo +deltaTime;
-                //verificar se o ninja ja atingiu a altura máxima, para indicar o fim do salto
-                if(posNinjaY>=alturaMaximaDeSalto){
-                    salto=false;
-                }
-            }
+				posNinjaY += velocidadeJogo + deltaTime;
+				//verificar se o ninja ja atingiu a altura máxima, para indicar o fim do salto
+				if (posNinjaY >= alturaMaximaDeSalto) {
+					salto = false;
+				}
+			}
 			//controle de cada, verificando se o salto ja terminou
-			if(!salto){
-				if(posNinjaY>=alturaMaximaDeSalto || posNinjaY>alturaMinimaDeQueda){
-                    indiceSprite=7;
-                    posNinjaY-= velocidadeJogo;
-                }
+			if (!salto) {
+				if (posNinjaY >= alturaMaximaDeSalto || posNinjaY > alturaMinimaDeQueda) {
+					indiceSprite = 7;
+					posNinjaY -= velocidadeJogo;
+				}
+			}
+
+			batch.begin();
+
+			batch.draw(fundo, 0, 0, larguraPadraoX, alturaPadraoY);
+
+			//desenhar o ambiente para movimento do fundo
+			batch.draw(mont1, movimento_ambiente1, 204);
+			batch.draw(mont2, movimento_ambiente2, 204);
+			batch.draw(mont3, movimento_ambiente3, 204);
+
+			/************************************************
+			 * Desenhar os obstaculos
+			 * */
+			batch.draw(obst_tronco, movimento_tronco, 204);
+			batch.draw(obst_madeira, movimento_madeira, 204);
+
+			//Inicializar a posição da fonte na tela
+			fonte.draw(batch, "Pontuação: " + pontuacao, (larguraPadraoX / 2) - 120, alturaPadraoY - 30);
+			batch.draw(ninja[(int) indiceSprite], 150, posNinjaY);
+			//adicionar moedas
+			batch.draw(coinGold[(int) indiceMoeda], movimentoMoeda, altura_minima_moeda, 80, 80);
+
+			batch.end();
+
+			//iniciar configurações para desenhar as formas
+			circuloMoeda.set(movimentoMoeda + 33, altura_minima_moeda + 45, 39);
+			rectanglePersonagem.set(70, posNinjaY, ninja[0].getWidth() - 30, ninja[0].getHeight() - 40);
+
+
+			/* *****************************************************
+			 * Capturando moeda
+			 * */
+			if (Intersector.overlaps(circuloMoeda, rectanglePersonagem)) {
+				movimentoMoeda = larguraPadraoX + 130;
+
+				//Aumentar a pontuação quando a moeda for capturada e tocar o som de captura da moeda
+				pontuacao++;
+				somMoeda.play(0.5f);
 			}
 		}
-
-        batch.begin();
-
-        batch.draw(fundo,0,0,larguraPadraoX,alturaPadraoY);
-
-        //desenhar o ambiente para movimento do fundo
-        batch.draw(mont1,movimento_ambiente1,204);
-        batch.draw(mont2,movimento_ambiente2,204);
-        batch.draw(mont3,movimento_ambiente3,204);
-
-		//Inicializar a posição da fonte na tela
-		fonte.draw(batch,"Pontuação: "+pontuacao,(larguraPadraoX/2)-120,alturaPadraoY - 30);
-        batch.draw(ninja[(int)indiceSprite],150,posNinjaY);
-        //adicionar moedas
-        batch.draw(coinGold[(int)indiceMoeda],movimentoMoeda,altura_minima_moeda,80,80);
-
-        batch.end();
-
-        //iniciar configurações para desenhar as formas
-		circuloMoeda.set(movimentoMoeda+33,altura_minima_moeda + 45,39);
-		rectanglePersonagem.set(150,posNinjaY,ninja[0].getWidth(),ninja[0].getHeight());
-
-		/* *****************************************************
-		* Capturando moeda
-		* */
-		if (Intersector.overlaps(circuloMoeda,rectanglePersonagem)){
-			movimentoMoeda = larguraPadraoX + 130;
-
-			//Escolher a posição aletória da moeda quando a mesma for capturada
-			if (esc>altura_minima_moeda){
-				altura_minima_moeda = esc;
-			}
-			pontuacao++;
-			somMoeda.play(0.5f);
-		}
+		//Estado do jogo 2=> GAMEOVER
+		if (estadoJogo == 2){
+		    batch.begin();
+		    batch.draw(game_over,0,0,larguraPadraoX,alturaPadraoY);
+		    batch.end();
+		    if (Gdx.input.justTouched()){
+		        estadoJogo = 0;
+            }
+        }
 	}
 	
 	@Override
