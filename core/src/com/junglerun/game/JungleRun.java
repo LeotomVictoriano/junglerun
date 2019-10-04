@@ -146,9 +146,6 @@ public class JungleRun extends ApplicationAdapter {
 	    //Inicializar o indice do Sprite
 		indiceSprite = 0;
 
-		//Inicializar a variável da velocidade do jogo
-		 velocidadeJogo = 8;
-
 		//inicializar a altura_minima e altura_maxima da moeda
 		altura_minima_moeda = 430;
 
@@ -196,6 +193,9 @@ public class JungleRun extends ApplicationAdapter {
 
             //Inicializar a pontuação
 			pontuacao = 0;
+
+			//Inicializar a variável da velocidade do jogo
+			velocidadeJogo = 8;
 
 			batch.begin();
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
