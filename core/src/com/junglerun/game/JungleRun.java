@@ -190,6 +190,7 @@ public class JungleRun extends ApplicationAdapter {
 		}
 		//estado do jogo 0 => Inicio do Jogo
 		if (estadoJogo == 1) {
+
 			//atribuindo o valor aleatorio
 			deltaTime = Gdx.graphics.getDeltaTime();
 			//incrementando a velocidade de jogo a cada ciclo de render
@@ -203,11 +204,19 @@ public class JungleRun extends ApplicationAdapter {
 			/*************************************
 			 * Controlar movimento dos obstaculos
 			 * */
-			if (movimento_tronco < -200) {
-				movimento_tronco = larguraPadraoX + 150;
+			if (movimento_tronco < -200){
+				if(movimento_madeira<-100){
+					movimento_tronco = larguraPadraoX + 150;
+				}else{
+					movimento_tronco = -200;
+				}
 			}
-			if (movimento_madeira < -1000) {
-				movimento_madeira = larguraPadraoX + 500;
+			if (movimento_madeira < -200){
+				if(movimento_tronco < -100){
+					movimento_madeira = larguraPadraoX + 500;
+				}else{
+					movimento_madeira = -500;
+				}
 			}
 
 			/*****************************************************
