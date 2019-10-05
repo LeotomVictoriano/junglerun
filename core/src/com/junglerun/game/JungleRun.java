@@ -376,6 +376,8 @@ public class JungleRun extends ApplicationAdapter {
         somAmbiente.dispose();
         somSalto.dispose();
         somMoeda.dispose();
+        somGameOver.dispose();
+        renderer.dispose();
         batch.dispose();
 	}
 }
