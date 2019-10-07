@@ -109,7 +109,7 @@ public class JungleRun extends ApplicationAdapter {
 		obst_tronco =  new Texture("obstaculo_tronco.png");
 		obst_madeira = new Texture("obstaculo_madeira_03.png");
 		menu = new Texture("Menu.png");
-		game_over = new Texture("GameOver.png");
+		game_over = new Texture("fundo_game_over.png");
 
 		//instanciar as formas
 		renderer = new ShapeRenderer();
