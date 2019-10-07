@@ -16,8 +16,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
-import java.util.Random;
-
 public class JungleRun extends ApplicationAdapter {
 
     //Texturas e elementos para o jogo
@@ -43,6 +41,8 @@ public class JungleRun extends ApplicationAdapter {
 	private ShapeRenderer renderer; //permite desenhar as formas
 	private Circle circuloMoeda; //circulo da moeda
 	private Rectangle rectanglePersonagem; //rectangulo para o personagem
+	private Rectangle rect_tronco;
+	private Rectangle rect_madeira;
 
 
     //dimensões de largura e altura padrão
@@ -50,17 +50,18 @@ public class JungleRun extends ApplicationAdapter {
     private int alturaPadraoY;
 	private int larguraFundo=0;
 	private int alturaFundo=0;
+
     //variavel para trabalhar com o indice do vector para alterar sprites
 	private float indiceSprite;
 
-	//
+	//delta time, variável para pegar o tempo de execução do jogo
 	private float deltaTime;
+
 	//propriedades de salto
-	private boolean salto;
-	private int alturaMaximaDeSalto;
-	private int alturaMinimaDeQueda;
+	 private boolean salto;
 	private float velocidadeJogo;
     private int posNinjaY;
+    private int velocidade_queda;
 
     //propriedades para trabalbalhar com a altura da moeda gold
 	private int altura_minima_moeda;
@@ -73,10 +74,12 @@ public class JungleRun extends ApplicationAdapter {
 
 	//Variavel para trabalhar com estado do jogo
 	private int estadoJogo;
+
 	//propriedades de som
     private Music somAmbiente;
     private Sound somSalto;
     private Sound somMoeda;
+    private Sound somGameOver;
 
     //Variável para trabalhar com o movimento do ambiente do fundo;
 	private int movimento_ambiente1;
@@ -92,6 +95,7 @@ public class JungleRun extends ApplicationAdapter {
 	    batch = new SpriteBatch();
 	    fundo = new Texture("fundo1.png");
 	    salto=false;
+
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
@@ -111,11 +115,10 @@ public class JungleRun extends ApplicationAdapter {
 		renderer = new ShapeRenderer();
 		circuloMoeda = new Circle();
 		rectanglePersonagem = new Rectangle();
-
-		//Instanciar o BitmapFont para trabalhar com fontes
+		rect_tronco = new Rectangle();
+		rect_madeira = new Rectangle();
 
         //Instanciar o BitmapFont para trabalhar com fontes
-
 		fonte = new BitmapFont();
 		fonte.setColor(Color.GOLD);
 		fonte.getData().setScale(3);
@@ -129,75 +132,102 @@ public class JungleRun extends ApplicationAdapter {
 		for(int i=0;i<6;i++){
 			coinGold[i] = new Texture("coinGold"+(i+1)+".png");
 		}
-
 		//inicializar altura e largura padrão
 	    larguraPadraoX = Gdx.graphics.getWidth();
 	    alturaPadraoY = Gdx.graphics.getHeight();
+
 	    //Obter o tamanho do fundo
 		alturaFundo = fundo.getHeight();
 		larguraFundo= fundo.getWidth();
+
         //setting a posicao do ninja
-        posNinjaY=(int)(alturaFundo*0.30);
+		posNinjaY=(int)(alturaFundo*0.30);
+
 	    //Inicializar o indice do Sprite
 		indiceSprite = 0;
-		//propriedades de salto
-		alturaMinimaDeQueda=(int)(alturaFundo*0.30);
-		/*
-		* Altura maxima definida a 80% mais alto que a posicao inicial do jogador*/
-		alturaMaximaDeSalto=posNinjaY+(int)(posNinjaY*0.8);
-		velocidadeJogo =8;
 
 		//inicializar a altura_minima e altura_maxima da moeda
 		altura_minima_moeda = 430;
+
 		//inicializar o indice da moeda
 		indiceMoeda = 0;
+
+		//Inicializar o movimento da moeda
 		movimentoMoeda = larguraPadraoX;
 
 		//Inicializar a variável de pontuação e o estado do jogo
-		pontuacao = 0;
 		estadoJogo = 0;
+
 		//Logica de som
 		//logica de som ambiente
 		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
-		somAmbiente.play();
-		somAmbiente.setVolume(0.3f);
-		somAmbiente.setLooping(true);
+
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+
+		//Lógica de som da moeda
 		somMoeda = Gdx.audio.newSound(Gdx.files.internal("moeda.wav"));
 
-		//inicializar o movimento do ambiente do fundo
-		movimento_ambiente1 = 300;
-		movimento_ambiente2 = 400;
+		//Lógica de som de GameOver
+		somGameOver = Gdx.audio.newSound(Gdx.files.internal("GameOverSound.wav"));
 
-
-		//Inicializar a posição horizontal dos obstaculos
-		movimento_tronco = larguraPadraoX+150;
-		movimento_madeira = larguraPadraoX+1000;
+		//Inicializar a velocidade da queda
+		velocidade_queda = 0;
 	}
 
 	@Override
 	public void render () {
 
-		//Estado do jogo 0=> Apresentação do menu do jogo
+		/**************************************************
+		 *
+		 * ESTADO 0 => EXIBIÇÃO DA TELA INICIAL DO JOGO
+		 */
 		if (estadoJogo == 0){
+            //Inicializar a posição horizontal dos obstaculos
+            movimento_tronco = larguraPadraoX+150;
+            movimento_madeira = larguraPadraoX+1000;
+            //inicializar o movimento do ambiente do fundo
+            movimento_ambiente1 = 300;
+            movimento_ambiente2 = 400;
+            movimento_ambiente3 = 600;
+
+            //Inicializar a pontuação
+			pontuacao = 0;
+
+			//Inicializar a variável da velocidade do jogo
+			velocidadeJogo = 8;
+
 			batch.begin();
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
 			batch.end();
 			if (Gdx.input.justTouched()){
+				somAmbiente.play();
+				somAmbiente.setVolume(0.3f);
+				somAmbiente.setLooping(true);
 				estadoJogo = 1;
 			}
 		}
+		/***************************************************************
+		 *
+		 * ESTADO 1=> JOGO EM EXECUÇÃO
+		 */
 		//estado do jogo 0 => Inicio do Jogo
 		if (estadoJogo == 1) {
 
-			//atribuindo o valor aleatorio
+			//Incrementar a velocidade da queda
+			velocidade_queda++;
+
+			//atribuindo o valor aleatorio no deltatime
 			deltaTime = Gdx.graphics.getDeltaTime();
+
 			//incrementando a velocidade de jogo a cada ciclo de render
 			velocidadeJogo += 0.001;
 
+			//Atribuindo valores aos índices do personagem e da moeda
 			indiceSprite += deltaTime * velocidadeJogo;
 			indiceMoeda += deltaTime * velocidadeJogo;
+
+			//Decrementando a posição horizontal do tronco e da madeira
 			movimento_tronco -= velocidadeJogo;
 			movimento_madeira -= velocidadeJogo;
 
@@ -220,7 +250,7 @@ public class JungleRun extends ApplicationAdapter {
 			}
 
 			/*****************************************************
-			 * Trabalhando com os movimentos dos troncos do fundo
+			 * Decrementando os movimentos das montanhas de fundo
 			 * */
 			movimento_ambiente1 -= velocidadeJogo;
 			movimento_ambiente2 -= velocidadeJogo;
@@ -229,7 +259,7 @@ public class JungleRun extends ApplicationAdapter {
 			/****************************************************
 			 * Condições que tratam o movimento dos troncos quando já não estão a ser exibidos na tela
 			 * */
-			if (movimento_ambiente1 < -100) {
+			if (movimento_ambiente1 < -150) {
 				movimento_ambiente1 = larguraPadraoX + 100;
 			}
 			if (movimento_ambiente2 < -150) {
@@ -244,42 +274,37 @@ public class JungleRun extends ApplicationAdapter {
 
 			//Se a moeda sair da tela sem ser capturada então
 			if (movimentoMoeda < -100) {
-				movimentoMoeda = larguraPadraoX;
+				movimentoMoeda = larguraPadraoX+100;
 			}
 
 			//controle de indice da moeda
 			if (indiceMoeda > 5) {
 				indiceMoeda = 0;
 			}
-
 			//se o indice do Sprite for maior que 9 zerar novamente o indice do Sprite
 			if (indiceSprite > 9) {
 				indiceSprite = 0;
 			}
-			if (Gdx.input.justTouched()) {
-				//verificar se o ninja está no chão
-				if (posNinjaY <= alturaMaximaDeSalto && posNinjaY <= alturaMinimaDeQueda) {
-					somSalto.play(0.1f);
-					salto = true;
-				}
-			}
-			//verficar se o jogador está em salto
-			if (salto) {
-				//se esta em salto, incrementar a posicao em Y
-				posNinjaY += velocidadeJogo + deltaTime;
-				//verificar se o ninja ja atingiu a altura máxima, para indicar o fim do salto
-				if (posNinjaY >= alturaMaximaDeSalto) {
-					salto = false;
-				}
-			}
-			//controle de cada, verificando se o salto ja terminou
-			if (!salto) {
-				if (posNinjaY >= alturaMaximaDeSalto || posNinjaY > alturaMinimaDeQueda) {
-					indiceSprite = 7;
-					posNinjaY -= velocidadeJogo;
-				}
-			}
 
+			/****************************************************
+			 * LÓGICA QUANDO A TELA É CLICADA PELO USUÁRIO
+			 */
+			if (!salto){
+			if (Gdx.input.justTouched()){
+				velocidade_queda = -20;
+			  }
+			}
+			if (posNinjaY > 192 || velocidade_queda < 0){
+				posNinjaY -= velocidade_queda;
+			}
+			if (posNinjaY>192){
+				salto = true;
+			}else {
+				salto = false;
+			}
+			/************************************************
+			 * INICIO DO BATCH PARA DESENHAR AMBIENTES NA TELA
+			 */
 			batch.begin();
 
 			batch.draw(fundo, 0, 0, larguraPadraoX, alturaPadraoY);
@@ -305,8 +330,12 @@ public class JungleRun extends ApplicationAdapter {
 
 			//iniciar configurações para desenhar as formas
 			circuloMoeda.set(movimentoMoeda + 33, altura_minima_moeda + 45, 39);
-			rectanglePersonagem.set(70, posNinjaY, ninja[0].getWidth() - 30, ninja[0].getHeight() - 40);
+			rectanglePersonagem.set(160, posNinjaY, ninja[0].getWidth()-20, ninja[0].getHeight()-10);
 
+
+			//Instanciar configurações das formas para os obstaculos
+			rect_tronco.set(movimento_tronco,204,obst_tronco.getWidth(),obst_tronco.getHeight());
+			rect_madeira.set(movimento_madeira,204,obst_madeira.getWidth(),obst_madeira.getHeight()-20);
 
 			/* *****************************************************
 			 * Capturando moeda
@@ -318,8 +347,20 @@ public class JungleRun extends ApplicationAdapter {
 				pontuacao++;
 				somMoeda.play(0.5f);
 			}
+			/**************************************************
+			 *Detectando colisão com os objetos e obstaculos
+			 */
+			if (Intersector.overlaps(rectanglePersonagem,rect_tronco) || Intersector.overlaps(rectanglePersonagem,rect_madeira)){
+				somGameOver.play(0.5f);
+				somAmbiente.stop();
+				estadoJogo = 2;
+			}
+
 		}
-		//Estado do jogo 2=> GAMEOVER
+		/**********************************************************
+		 *
+		 * ESTADO 2 => TELA DE GAMEOVER
+		 */
 		if (estadoJogo == 2){
 		    batch.begin();
 		    batch.draw(game_over,0,0,larguraPadraoX,alturaPadraoY);
@@ -335,6 +376,8 @@ public class JungleRun extends ApplicationAdapter {
         somAmbiente.dispose();
         somSalto.dispose();
         somMoeda.dispose();
+        somGameOver.dispose();
+        renderer.dispose();
         batch.dispose();
 	}
 }
