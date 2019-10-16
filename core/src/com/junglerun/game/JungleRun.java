@@ -57,6 +57,11 @@ public class JungleRun extends ApplicationAdapter {
 	//delta time, variável para pegar o tempo de execução do jogo
 	private float deltaTime;
 
+	//variaveis da imagem da vida
+	private Texture[] vidaimg;
+	private int quantidade_vida=3;
+	private int espaco_entre_vidas;
+
 	//propriedades de salto
 	 private boolean salto;
 	private float velocidadeJogo;
@@ -89,7 +94,6 @@ public class JungleRun extends ApplicationAdapter {
 	//Variáveis para controlo do movimento horizontal do obstaculo
 	private int movimento_tronco;
 	private int movimento_madeira;
-
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
@@ -99,7 +103,7 @@ public class JungleRun extends ApplicationAdapter {
 	    //Instância do vector do sprite
 		ninja = new Texture[10];
 		coinGold = new Texture[6];
-
+		vidaimg=new Texture[quantidade_vida];
 		//inicializando as novas texturas para o ambiente do jogo
 		mont1 = new Texture("Mont01.png");
 		mont2 = new Texture("Mont02.png");
@@ -110,6 +114,14 @@ public class JungleRun extends ApplicationAdapter {
 		obst_madeira = new Texture("obstaculo_madeira_03.png");
 		menu = new Texture("Menu.png");
 		game_over = new Texture("fundo_game_over.png");
+
+		//inicializar a textura da vida e componentes da textura
+
+        for (int c=0;c<quantidade_vida;c++) {
+            vidaimg[c] = new Texture("vida.png");
+            }
+        //definir o espaçamento entre os corações
+		espaco_entre_vidas=vidaimg[0].getWidth();
 
 		//instanciar as formas
 		renderer = new ShapeRenderer();
@@ -214,6 +226,7 @@ public class JungleRun extends ApplicationAdapter {
 		//estado do jogo 0 => Inicio do Jogo
 		if (estadoJogo == 1) {
 
+
 			//Incrementar a velocidade da queda
 			velocidade_queda++;
 
@@ -314,6 +327,7 @@ public class JungleRun extends ApplicationAdapter {
 			batch.draw(mont2, movimento_ambiente2, 204);
 			batch.draw(mont3, movimento_ambiente3, 204);
 
+
 			/************************************************
 			 * Desenhar os obstaculos
 			 * */
@@ -325,6 +339,13 @@ public class JungleRun extends ApplicationAdapter {
 			batch.draw(ninja[(int) indiceSprite], 150, posNinjaY);
 			//adicionar moedas
 			batch.draw(coinGold[(int) indiceMoeda], movimentoMoeda, altura_minima_moeda, 80, 80);
+
+			/**
+			 * Desenhar a vida do personagem
+			 * */
+			for (int i = 0,space=espaco_entre_vidas; i <quantidade_vida ; i++, space+=espaco_entre_vidas) {
+				batch.draw(vidaimg[i],space,alturaFundo);
+			}
 
 			batch.end();
 
