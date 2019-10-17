@@ -95,6 +95,10 @@ public class JungleRun extends ApplicationAdapter {
 	//Variáveis para controlo do movimento horizontal do obstaculo
 	private int movimento_tronco;
 	private int movimento_madeira;
+
+	//variável de controle de toque
+	private int controle_toque;
+
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
@@ -205,6 +209,7 @@ public class JungleRun extends ApplicationAdapter {
             movimento_ambiente1 = 300;
             movimento_ambiente2 = 400;
             movimento_ambiente3 = 600;
+            controle_toque = 0;
 
             //Inicializar a pontuação
 			pontuacao = 0;
@@ -228,6 +233,8 @@ public class JungleRun extends ApplicationAdapter {
 		 */
 		//estado do jogo 0 => Inicio do Jogo
 		if (estadoJogo == 1) {
+
+			controle_toque = 0;
 
 
 			//Incrementar a velocidade da queda
@@ -397,8 +404,12 @@ public class JungleRun extends ApplicationAdapter {
 			fonte.draw(batch, "Ops ! Você Perdeu\nToque para voltar ao menu Inicial\n" +
 					"Pontuação Total: "+pontuacao+" Ponto(s)", (larguraPadraoX / 2) - 300, (alturaPadraoY/2)-150);
 		    batch.end();
+
 		    if (Gdx.input.justTouched()){
-		        estadoJogo = 0;
+				controle_toque++;
+		    	if (controle_toque == 2) {
+					estadoJogo = 0;
+				}
             }
         }
 
@@ -417,7 +428,10 @@ public class JungleRun extends ApplicationAdapter {
 			if (Gdx.input.justTouched()){
 				somAmbiente.play();
 				somAmbiente.setLooping(true);
-				estadoJogo = 1;
+				controle_toque++;
+				if (controle_toque == 2) {
+					estadoJogo = 1;
+				}
 			}
 		}
 	}
