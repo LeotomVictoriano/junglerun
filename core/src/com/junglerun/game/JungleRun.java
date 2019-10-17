@@ -28,6 +28,7 @@ public class JungleRun extends ApplicationAdapter {
 	private Texture mont1;
 	private Texture mont2;
 	private Texture mont3;
+	private Texture logo;
 
 	//Textura para trabalhar com obstaculos
 	private Texture obst_tronco;
@@ -59,7 +60,7 @@ public class JungleRun extends ApplicationAdapter {
 
 	//variaveis da imagem da vida
 	private Texture[] vidaimg;
-	private int quantidade_vida=3;
+	private int quantidade_vida = 3;
 	private int espaco_entre_vidas;
 
 	//propriedades de salto
@@ -108,6 +109,7 @@ public class JungleRun extends ApplicationAdapter {
 		mont1 = new Texture("Mont01.png");
 		mont2 = new Texture("Mont02.png");
 		mont3 = new Texture("Mont03.png");
+		logo = new Texture("logo.png");
 
 		//Inicializar as Texturas de Obstaculos
 		obst_tronco =  new Texture("obstaculo_tronco.png");
@@ -132,7 +134,7 @@ public class JungleRun extends ApplicationAdapter {
 
         //Instanciar o BitmapFont para trabalhar com fontes
 		fonte = new BitmapFont();
-		fonte.setColor(Color.GOLD);
+		fonte.setColor(Color.GREEN);
 		fonte.getData().setScale(3);
 
 	    //Preenchendo o vector com sprite personagem ao vector
@@ -198,6 +200,7 @@ public class JungleRun extends ApplicationAdapter {
             //Inicializar a posição horizontal dos obstaculos
             movimento_tronco = larguraPadraoX+150;
             movimento_madeira = larguraPadraoX+1000;
+            quantidade_vida = 3;
             //inicializar o movimento do ambiente do fundo
             movimento_ambiente1 = 300;
             movimento_ambiente2 = 400;
@@ -372,9 +375,14 @@ public class JungleRun extends ApplicationAdapter {
 			 *Detectando colisão com os objetos e obstaculos
 			 */
 			if (Intersector.overlaps(rectanglePersonagem,rect_tronco) || Intersector.overlaps(rectanglePersonagem,rect_madeira)){
-				somGameOver.play(0.5f);
-				somAmbiente.stop();
-				estadoJogo = 2;
+				if (quantidade_vida>1){
+					quantidade_vida--;
+					estadoJogo = 3;
+				}else {
+					estadoJogo = 2;
+				}
+					somGameOver.play(0.5f);
+					somAmbiente.stop();
 			}
 
 		}
@@ -385,11 +393,33 @@ public class JungleRun extends ApplicationAdapter {
 		if (estadoJogo == 2){
 		    batch.begin();
 		    batch.draw(game_over,0,0,larguraPadraoX,alturaPadraoY);
+			batch.draw(logo,(larguraPadraoX/2)-400,(alturaPadraoY/2)-100);
+			fonte.draw(batch, "Ops ! Você Perdeu\nToque para voltar ao menu Inicial\n" +
+					"Pontuação Total: "+pontuacao+" Ponto(s)", (larguraPadraoX / 2) - 300, (alturaPadraoY/2)-150);
 		    batch.end();
 		    if (Gdx.input.justTouched()){
 		        estadoJogo = 0;
             }
         }
+
+		/***********************************************
+		 * ESTADO 3 => Quando o usuário ainda possui vidas suficientes para jogar
+		 */
+		if (estadoJogo==3){
+			movimento_tronco = larguraPadraoX+150;
+			movimento_madeira = larguraPadraoX+1000;
+			batch.begin();
+			batch.draw(game_over,0,0,larguraPadraoX,alturaPadraoY);
+			batch.draw(logo,(larguraPadraoX/2)-400,(alturaPadraoY/2)-100);
+			fonte.draw(batch, "Você Ainda Possui "+quantidade_vida+" Vida(s)\n" +
+					"Toque Na tela para continuar a jogar", (larguraPadraoX / 2) - 300, (alturaPadraoY/2)-150);
+			batch.end();
+			if (Gdx.input.justTouched()){
+				somAmbiente.play();
+				somAmbiente.setLooping(true);
+				estadoJogo = 1;
+			}
+		}
 	}
 	
 	@Override
