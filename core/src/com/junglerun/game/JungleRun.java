@@ -118,7 +118,7 @@ public class JungleRun extends ApplicationAdapter {
 		//Inicializar as Texturas de Obstaculos
 		obst_tronco =  new Texture("obstaculo_tronco.png");
 		obst_madeira = new Texture("obstaculo_madeira_03.png");
-		menu = new Texture("Menu.png");
+		menu = new Texture("Menu.jpg");
 		game_over = new Texture("fundo_game_over.png");
 
 		//inicializar a textura da vida e componentes da textura
