@@ -86,7 +86,7 @@ public class JungleRun extends ApplicationAdapter {
 	private int estadoJogo;
 
 	//propriedades de som
- //   private Music somAmbiente;
+    private Music somAmbiente;
     private Sound somSalto;
     private Sound somGameOver;
 	private Sound somMoeda;
@@ -193,7 +193,7 @@ public class JungleRun extends ApplicationAdapter {
 
 		//Logica de som
 		//logica de som ambiente
-	//	somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
+		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
 
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
@@ -253,9 +253,9 @@ public class JungleRun extends ApplicationAdapter {
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
 			batch.end();
 			if (Gdx.input.justTouched()){
-			//	somAmbiente.play();
-			//	somAmbiente.setVolume(0.2f);
-			//	somAmbiente.setLooping(true);
+				somAmbiente.play();
+				somAmbiente.setVolume(0.2f);
+				somAmbiente.setLooping(true);
 				estadoJogo = 1;
 			}
 		}
@@ -423,7 +423,7 @@ public class JungleRun extends ApplicationAdapter {
 					estadoJogo = 2;
 				}
 					somGameOver.play(0.5f);
-				//	somAmbiente.stop();
+					somAmbiente.stop();
 			}
 
 		}
@@ -460,11 +460,11 @@ public class JungleRun extends ApplicationAdapter {
 					"Toque Na tela para continuar a jogar", (larguraPadraoX / 2) - 300, (alturaPadraoY/2)-150);
 			batch.end();
 			if (Gdx.input.justTouched()){
-			//	somAmbiente.play();
-			//	somAmbiente.setLooping(true);
 				controle_toque++;
 				if (controle_toque == 2) {
 					estadoJogo = 1;
+					somAmbiente.play();
+					somAmbiente.setLooping(true);
 				}
 			}
 		}
