@@ -3,6 +3,8 @@ package com.junglerun.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +17,8 @@ import com.badlogic.gdx.math.Rectangle;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class JungleRun extends ApplicationAdapter {
 
@@ -47,8 +51,8 @@ public class JungleRun extends ApplicationAdapter {
 
 
     //dimensões de largura e altura padrão
-    private int larguraPadraoX;
-    private int alturaPadraoY;
+    private float larguraPadraoX;
+    private float alturaPadraoY;
 	private int larguraFundo=0;
 	private int alturaFundo=0;
 
@@ -72,7 +76,7 @@ public class JungleRun extends ApplicationAdapter {
     //propriedades para trabalbalhar com a altura da moeda gold
 	private int altura_minima_moeda;
 	private float indiceMoeda;
-	private int movimentoMoeda;
+	private float movimentoMoeda;
 
 	//Variavel para trabalhar com pontuação
 	private BitmapFont fonte;
@@ -82,22 +86,33 @@ public class JungleRun extends ApplicationAdapter {
 	private int estadoJogo;
 
 	//propriedades de som
-    private Music somAmbiente;
+ //   private Music somAmbiente;
     private Sound somSalto;
-    private Sound somMoeda;
     private Sound somGameOver;
+	private Sound somMoeda;
 
     //Variável para trabalhar com o movimento do ambiente do fundo;
-	private int movimento_ambiente1;
-	private int movimento_ambiente2;
-	private int movimento_ambiente3;
+	private float movimento_ambiente1;
+	private float movimento_ambiente2;
+	private float movimento_ambiente3;
 
 	//Variáveis para controlo do movimento horizontal do obstaculo
-	private int movimento_tronco;
-	private int movimento_madeira;
+	private float movimento_tronco;
+	private float movimento_madeira;
 
 	//variável de controle de toque
 	private int controle_toque;
+
+	/**********************************************************
+	 * CONFIGURAÇÕES DO VIEWPORT
+	 */
+	//declaração de variáveis para a configuração da câmera
+	private OrthographicCamera camera;
+	private Viewport viewport;
+
+	//constante de largura e altura
+	private final float WIDTH = 1280;
+	private final float HEIGHT = 720;
 
 	@Override
 	public void create () {
@@ -151,8 +166,8 @@ public class JungleRun extends ApplicationAdapter {
 			coinGold[i] = new Texture("coinGold"+(i+1)+".png");
 		}
 		//inicializar altura e largura padrão
-	    larguraPadraoX = Gdx.graphics.getWidth();
-	    alturaPadraoY = Gdx.graphics.getHeight();
+	    larguraPadraoX = WIDTH;
+	    alturaPadraoY = HEIGHT;
 
 	    //Obter o tamanho do fundo
 		alturaFundo = fundo.getHeight();
@@ -178,7 +193,7 @@ public class JungleRun extends ApplicationAdapter {
 
 		//Logica de som
 		//logica de som ambiente
-		somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
+	//	somAmbiente = Gdx.audio.newMusic(Gdx.files.internal("Ambiente.wav"));
 
 		//Logica de som de salto
 		somSalto = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
@@ -191,10 +206,24 @@ public class JungleRun extends ApplicationAdapter {
 
 		//Inicializar a velocidade da queda
 		velocidade_queda = 0;
+
+		/**********************************************************
+		 * INICIAR AS CONFIGURAÇÕES PARA TRABALHAR COM CÂMERA
+		 */
+		//instânciar configurações da câmera
+		camera = new OrthographicCamera();
+		camera.position.set(WIDTH/2,HEIGHT/2,0);
+		viewport = new StretchViewport(WIDTH,HEIGHT,camera);
 	}
 
 	@Override
 	public void render () {
+
+		//Atualizar a Câmera
+		camera.update();
+
+		//Limpar frames anteriores
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		/**************************************************
 		 *
@@ -217,13 +246,16 @@ public class JungleRun extends ApplicationAdapter {
 			//Inicializar a variável da velocidade do jogo
 			velocidadeJogo = 8;
 
+			//Configurar as projeções da Câmera
+			batch.setProjectionMatrix(camera.combined);
+
 			batch.begin();
 			batch.draw(menu,0,0,larguraPadraoX,alturaPadraoY);
 			batch.end();
 			if (Gdx.input.justTouched()){
-				somAmbiente.play();
-				somAmbiente.setVolume(0.3f);
-				somAmbiente.setLooping(true);
+			//	somAmbiente.play();
+			//	somAmbiente.setVolume(0.2f);
+			//	somAmbiente.setLooping(true);
 				estadoJogo = 1;
 			}
 		}
@@ -315,6 +347,7 @@ public class JungleRun extends ApplicationAdapter {
 			if (!salto){
 			if (Gdx.input.justTouched()){
 				velocidade_queda = -20;
+				somSalto.play(0.3f);
 			  }
 			}
 			if (posNinjaY > 192 || velocidade_queda < 0){
@@ -328,6 +361,7 @@ public class JungleRun extends ApplicationAdapter {
 			/************************************************
 			 * INICIO DO BATCH PARA DESENHAR AMBIENTES NA TELA
 			 */
+
 			batch.begin();
 
 			batch.draw(fundo, 0, 0, larguraPadraoX, alturaPadraoY);
@@ -389,7 +423,7 @@ public class JungleRun extends ApplicationAdapter {
 					estadoJogo = 2;
 				}
 					somGameOver.play(0.5f);
-					somAmbiente.stop();
+				//	somAmbiente.stop();
 			}
 
 		}
@@ -426,8 +460,8 @@ public class JungleRun extends ApplicationAdapter {
 					"Toque Na tela para continuar a jogar", (larguraPadraoX / 2) - 300, (alturaPadraoY/2)-150);
 			batch.end();
 			if (Gdx.input.justTouched()){
-				somAmbiente.play();
-				somAmbiente.setLooping(true);
+			//	somAmbiente.play();
+			//	somAmbiente.setLooping(true);
 				controle_toque++;
 				if (controle_toque == 2) {
 					estadoJogo = 1;
@@ -438,11 +472,16 @@ public class JungleRun extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-        somAmbiente.dispose();
+    //    somAmbiente.dispose();
         somSalto.dispose();
         somMoeda.dispose();
         somGameOver.dispose();
         renderer.dispose();
         batch.dispose();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		viewport.update(width,height);
 	}
 }
